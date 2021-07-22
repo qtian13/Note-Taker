@@ -1,16 +1,7 @@
-// // const api = require('./routes/note.js')
-
-// // app.use('api', api);
-
-// app.get('/', (req, res) => 
-//     res.sendFile(path.join(__dirname, '/public/index.html'))
-// );
-
-// app.listen(PORT, () => console.log(`App listening on port ${PORT}`));
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const notesData = require('./db/db.json');
+let notesData = require('./db/db.json');
 const uuid = require('./helpers/uuid');
 
 const PORT = process.env.PORT || 3001;
@@ -32,7 +23,13 @@ app.get('/notes', (req, res) =>
   res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
 
-app.get('/api/notes', (req, res) => res.json(notesData));
+var gettimes = 0;
+app.get('/api/notes', (req, res) => {
+  gettimes += 1;
+  notesData = require('./db/db.json');
+  res.json(notesData);
+  console.log(gettimes, notesData);
+});
 
 app.post('/api/notes', (req, res) => {
   // Destructuring assignment for the items in req.body
@@ -67,6 +64,7 @@ app.post('/api/notes', (req, res) => {
               ? console.error(writeErr)
               : console.info('Successfully updated reviews!')
         );
+
       }
     });
 
