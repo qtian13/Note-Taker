@@ -1,7 +1,6 @@
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-let notesData = require('./db/db.json');
 const uuid = require('./helpers/uuid');
 
 const PORT = process.env.PORT || 3001;
@@ -27,13 +26,12 @@ var gettimes = 0;
 app.get('/api/notes', (req, res) => {
   gettimes += 1;
   notesData = require('./db/db.json');
-  res.json(notesData);
-  console.log(gettimes, notesData);
+
+  res.json(JSON.parse(fs.readFileSync('./db/db.json', 'utf-8')));
 });
 
 app.post('/api/notes', (req, res) => {
   // Destructuring assignment for the items in req.body
-  console.log(req.body);
   const { title, text } = req.body;
 
   if (title.trim() && text.trim()) {
@@ -73,7 +71,6 @@ app.post('/api/notes', (req, res) => {
       body: newNote,
     };
 
-    console.log(response);
     res.json(response);
   } else {
     res.json('Error in posting review');
