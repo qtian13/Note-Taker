@@ -1,11 +1,6 @@
 // // const api = require('./routes/note.js')
 
-// const PORT = process.env.port || 3001;
-// const app = express();
-// app.use(express.json());
-// app.use(express.urlencoded({extended: true}));
 // // app.use('api', api);
-// app.use(express.static('public'));
 
 // app.get('/', (req, res) => 
 //     res.sendFile(path.join(__dirname, '/public/index.html'))
@@ -13,6 +8,7 @@
 
 // app.listen(PORT, () => console.log(`App listening on port ${PORT}`));
 const express = require('express');
+const fs = require('fs');
 const path = require('path');
 const notesData = require('./db/db.json');
 const uuid = require('./helpers/uuid');
@@ -22,6 +18,8 @@ const PORT = process.env.PORT || 3001;
 
 
 const app = express();
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 
 app.use(express.static('public'));
 
@@ -35,5 +33,54 @@ app.get('/notes', (req, res) =>
 );
 
 app.get('/api/notes', (req, res) => res.json(notesData));
+
+app.post('/api/notes', (req, res) => {
+  // Destructuring assignment for the items in req.body
+  console.log(req.body);
+  const { title, text } = req.body;
+
+  if (title.trim() && text.trim()) {
+    // Variable for the object we will save
+    const newNote = {
+      title,
+      text,
+      id: uuid(),
+    };
+
+    // Obtain existing notes
+    fs.readFile('./db/db.json', 'utf8', (err, data) => {
+      if (err) {
+        console.error(err);
+      } else {
+        // Convert string into JSON object
+        const parsedNotes = JSON.parse(data);
+
+        // Add a new review
+        parsedNotes.push(newNote);
+
+        // Write updated reviews back to the file
+        fs.writeFile(
+          './db/db.json',
+          JSON.stringify(parsedNotes, null, 4),
+          (writeErr) =>
+            writeErr
+              ? console.error(writeErr)
+              : console.info('Successfully updated reviews!')
+        );
+      }
+    });
+
+    const response = {
+      status: 'success',
+      body: newNote,
+    };
+
+    console.log(response);
+    res.json(response);
+  } else {
+    res.json('Error in posting review');
+  }
+});
+
 
 app.listen(PORT, () => console.log(`App listening on port ${PORT}`));
