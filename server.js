@@ -22,11 +22,7 @@ app.get('/notes', (req, res) =>
   res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
 
-var gettimes = 0;
 app.get('/api/notes', (req, res) => {
-  gettimes += 1;
-  notesData = require('./db/db.json');
-
   res.json(JSON.parse(fs.readFileSync('./db/db.json', 'utf-8')));
 });
 
@@ -34,7 +30,7 @@ app.post('/api/notes', (req, res) => {
   // Destructuring assignment for the items in req.body
   const { title, text } = req.body;
 
-  if (title.trim() && text.trim()) {
+  if (title && text) {
     // Variable for the object we will save
     const newNote = {
       title,
@@ -50,10 +46,10 @@ app.post('/api/notes', (req, res) => {
         // Convert string into JSON object
         const parsedNotes = JSON.parse(data);
 
-        // Add a new review
+        // Add a new note
         parsedNotes.push(newNote);
 
-        // Write updated reviews back to the file
+        // Write updated notes back to the file
         fs.writeFile(
           './db/db.json',
           JSON.stringify(parsedNotes, null, 4),
@@ -62,7 +58,6 @@ app.post('/api/notes', (req, res) => {
               ? console.error(writeErr)
               : console.info('Successfully updated reviews!')
         );
-
       }
     });
 
@@ -75,6 +70,38 @@ app.post('/api/notes', (req, res) => {
   } else {
     res.json('Error in posting review');
   }
+});
+
+app.delete('/api/notes/:id', (req, res) => {
+    // Obtain existing notes
+    fs.readFile('./db/db.json', 'utf8', (err, data) => {
+      if (err) {
+        console.error(err);
+      } else {
+        // Convert string into JSON object
+        const noteId = req.params.id;
+        const parsedNotes = JSON.parse(data);
+
+        // remove target note
+        notesAfterDelete = parsedNotes.filter(note => note.id != noteId);
+
+        // Write updated notes back to the file
+        fs.writeFile(
+          './db/db.json',
+          JSON.stringify(notesAfterDelete, null, 4),
+          (writeErr) =>
+            writeErr
+              ? console.error(writeErr)
+              : console.info('Successfully updated reviews!')
+        );
+      }
+    });
+
+    const response = {
+      status: 'success',
+    };
+
+    res.json(response);
 });
 
 
