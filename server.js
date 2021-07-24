@@ -21,7 +21,9 @@ app.get('/notes', (req, res) =>
 );
 
 app.get('/api/notes', (req, res) => {
-  res.json(JSON.parse(fs.readFileSync('./db/db.json', 'utf-8')));
+  fs.readFile('./db/db.json', 'utf-8', (error, data) => {
+    error ? console.error(error) : res.json(JSON.parse(data));
+  });
 });
 
 app.post('/api/notes', (req, res) => {
