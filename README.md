@@ -17,6 +17,7 @@ git clone https://github.com/qtian13/Note-Taker.git
 npm init -y
 npm i express
 npm i uniqid
+npm i util
 node server.js
 ```
 ## Built With
@@ -35,7 +36,7 @@ node server.js
 6. When user click on the `Write icon` in the navigation at the top of the page, they are presented with empty fields to enter a new note title and the note’s text in the right-hand column
 
 ## Deployed Page
-Deployed Page: [https://limitless-bayou-01329.herokuapp.com/notes](https://limitless-bayou-01329.herokuapp.com/notes)
+Deployed Page: [https://limitless-bayou-01329.herokuapp.com](https://limitless-bayou-01329.herokuapp.com)
 
 ## Demo GIF
 ![Note Taker Demo](assets/images/demo.gif)
